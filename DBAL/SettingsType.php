@@ -13,7 +13,7 @@ class SettingsType extends AbstractEnumType
     const Text    = 'text';
     const Html    = 'html';
 
-    protected static $choices  = array(
+    protected static array $choices  = array(
         self::Boolean => 'Boolean',
         self::Integer => 'Integer',
         self::Float   => 'Float',
@@ -22,5 +22,5 @@ class SettingsType extends AbstractEnumType
         self::Html    => 'Html',
     );
 
-    protected $name = 'VsavritskySettingsEnumType';
+    protected string $name = 'VsavritskySettingsEnumType';
 }

@@ -6,9 +6,11 @@
     "license" : "MIT",
     "keywords" : ["settings", "settings bundle", "settings management"],
     "require" : {
-        "php": ">=7.1",
-        "symfony/framework-bundle": ">=4",
-        "fresh/doctrine-enum-bundle": ">=4.8"
+        "php": "^8.2",
+        "symfony/framework-bundle": "^6.4",
+        "fresh/doctrine-enum-bundle": ">=4.8",
+        "sonata-project/admin-bundle": "^4.32",
+        "twig/twig": "^3.15"
     },
     "suggest": {
         "sonata-project/admin-bundle": "Allow configure settings with administration panel",

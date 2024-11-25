@@ -6,15 +6,8 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class SymfonyCache implements AdapterCacheInterface
 {
-    /** @var AdapterInterface */
-    private $adapter;
-
-    /**
-     * @param AdapterInterface $adapter
-     */
-    public function __construct(AdapterInterface $adapter)
+    public function __construct(private AdapterInterface $adapter)
     {
-        $this->adapter = $adapter;
     }
 
     /**

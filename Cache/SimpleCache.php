@@ -6,15 +6,8 @@ use Symfony\Component\Cache\Simple\AbstractCache;
 
 class SimpleCache implements AdapterCacheInterface
 {
-    /** @var AbstractCache */
-    private $adapter;
-
-    /**
-     * @param AbstractCache $adapter
-     */
-    public function __construct(AbstractCache $adapter)
+    public function __construct(private AbstractCache $adapter)
     {
-        $this->adapter = $adapter;
     }
 
     /**

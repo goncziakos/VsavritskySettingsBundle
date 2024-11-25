@@ -9,10 +9,13 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 
 use Vsavritsky\SettingsBundle\Entity\Category;
+use Vsavritsky\SettingsBundle\Service\Settings as SettingsService;
 
 class CategoryAdmin extends AbstractAdmin
 {
-    public function configureListFields(ListMapper $listMapper)
+    private SettingsService $settings;
+
+    public function configureListFields(ListMapper $listMapper): void
     {
         $listMapper
             ->addIdentifier('name')
@@ -20,7 +23,7 @@ class CategoryAdmin extends AbstractAdmin
         ;
     }
 
-    public function configureFormFields(FormMapper $formMapper)
+    public function configureFormFields(FormMapper $formMapper): void
     {
         $formMapper
             ->add('name')
@@ -28,14 +31,14 @@ class CategoryAdmin extends AbstractAdmin
         ;
     }
 
-    public function configureDatagridFilters(DatagridMapper $datagridMapper)
+    public function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper
             ->add('name')
         ;
     }
 
-    public function configureShowFields(ShowMapper $showMapper)
+    public function configureShowFields(ShowMapper $showMapper): void
     {
         $showMapper
             ->add('name')
@@ -46,7 +49,7 @@ class CategoryAdmin extends AbstractAdmin
     /**
      * @param Category $object
      */
-    public function postPersist($object)
+    public function postPersist($object): void
     {
         $this->clearCache($object);
     }
@@ -54,7 +57,7 @@ class CategoryAdmin extends AbstractAdmin
     /**
      * @param Category $object
      */
-    public function postUpdate($object)
+    public function postUpdate($object): void
     {
         $this->clearCache($object);
     }
@@ -62,18 +65,21 @@ class CategoryAdmin extends AbstractAdmin
     /**
      * @param Category $object
      */
-    public function preRemove($object)
+    public function preRemove($object): void
     {
         $this->clearCache($object);
+    }
+
+    public function setSettings(SettingsService $settings): void
+    {
+        $this->settings = $settings;
     }
 
     /**
      * @param Category $object
      */
-    private function clearCache(Category $object)
+    private function clearCache(Category $object): void
     {
-        /** @var \Vsavritsky\SettingsBundle\Service\Settings $settings */
-        $settings = $this->getConfigurationPool()->getContainer()->get('vsavritsky_settings.settings');
-        $settings->clearGroupCache($object->getName());
+        $this->settings->clearGroupCache($object->getName());
     }
 }

@@ -4,7 +4,6 @@
 {% set value = subject.value %}
 {% set _attr = attr|merge({'data-type': subject.type}) %}
 <div class="vsavritsky_settings_value_container">
-{%- spaceless %}
     {% if subject.type is constant('Vsavritsky\\SettingsBundle\\DBAL\\SettingsType::Boolean') %}
         {% set attr = _attr %}
         {% if value == true %}
@@ -37,7 +36,6 @@
         {% set attr = _attr %}
         {{ block(html_widget ? html_widget~'_widget': 'textarea_widget') }}
     {% endif %}
-{% endspaceless %}
 </div>
 {% set value = null %}
 <script type="text/html" id="tpl_widget_boolean_{{ widget_id }}">

@@ -9,17 +9,23 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\Type\ModelListType;
 use Sonata\AdminBundle\Show\ShowMapper;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Vsavritsky\SettingsBundle\DBAL\SettingsType;
 use Vsavritsky\SettingsBundle\Entity\Settings;
 use Vsavritsky\SettingsBundle\Entity\Category;
+use Vsavritsky\SettingsBundle\Service\Settings as SettingsService;
 
 class SettingsAdmin extends AbstractAdmin
 {
-    public function configureListFields(ListMapper $listMapper)
+    private ParameterBagInterface $parameterBag;
+
+    private SettingsService $settings;
+
+    public function configureListFields(ListMapper $listMapper): void
     {
-        $useCategoryComment = $this->getConfigurationPool()->getContainer()
-            ->getParameter('vsavritsky_settings.use_category_comment');
+        $useCategoryComment = $this->parameterBag->get('vsavritsky_settings.use_category_comment');
 
         $listMapper
             ->addIdentifier('name')
@@ -32,12 +38,12 @@ class SettingsAdmin extends AbstractAdmin
                 'sort_parent_association_mappings' => array(array('fieldName' => 'category'))
             ))
             ->add('type', ChoiceType::class, array('choices' => SettingsType::getReadableValues(), 'catalogue' => 'messages'))
-            ->add('value', null, array('template' => 'VsavritskySettingsBundle:Admin:list_value.html.twig'))
+            ->add('value', null, array('template' => '@VsavritskySettings/Admin/list_value.html.twig'))
             ->add('comment')
         ;
     }
 
-    public function configureFormFields(FormMapper $formMapper)
+    public function configureFormFields(FormMapper $formMapper): void
     {
         $valueType = $this->isNewForm()
             ? 'Vsavritsky\SettingsBundle\Form\Type\SettingValueType'
@@ -54,10 +60,9 @@ class SettingsAdmin extends AbstractAdmin
         ;
     }
 
-    public function configureDatagridFilters(DatagridMapper $datagridMapper)
+    public function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
-        $useCategoryComment = $this->getConfigurationPool()->getContainer()
-            ->getParameter('vsavritsky_settings.use_category_comment');
+        $useCategoryComment = $this->parameterBag->get('vsavritsky_settings.use_category_comment');
 
         $categoryOptions = $this->isNewForm()
             ? array(
@@ -66,13 +71,20 @@ class SettingsAdmin extends AbstractAdmin
                 },
             ) : array();
         $datagridMapper
-            ->add('category', null, array(), null, $categoryOptions)
+            ->add('category', null, [
+                'field_options' => $categoryOptions
+            ])
             ->add('name')
-            ->add('type', null, array(), ChoiceType::class, array('choices' => SettingsType::getChoices()))
+            ->add('type', null, [
+                'field_type' => ChoiceType::class,
+                'field_options' => [
+                    'choices' => SettingsType::getChoices(),
+                ],
+            ])
         ;
     }
 
-    public function configureShowFields(ShowMapper $showMapper)
+    public function configureShowFields(ShowMapper $showMapper): void
     {
         $showMapper
             ->add('name')
@@ -85,7 +97,7 @@ class SettingsAdmin extends AbstractAdmin
     /**
      * @param Settings $object
      */
-    public function postPersist($object)
+    public function postPersist($object): void
     {
         $this->clearCache($object);
     }
@@ -93,7 +105,7 @@ class SettingsAdmin extends AbstractAdmin
     /**
      * @param Settings $object
      */
-    public function postUpdate($object)
+    public function postUpdate($object): void
     {
         $this->clearCache($object);
     }
@@ -101,29 +113,37 @@ class SettingsAdmin extends AbstractAdmin
     /**
      * @param Settings $object
      */
-    public function preRemove($object)
+    public function preRemove($object): void
     {
         $this->clearCache($object);
     }
 
-    public function getFormTheme()
+    public function configure(): void
     {
-        return array_merge(
-            parent::getFormTheme(),
-            array('VsavritskySettingsBundle:Form:setting_value_edit.html.twig')
-        );
+        $this->setFormTheme(array_merge(
+            $this->getFormTheme(),
+            array('@VsavritskySettings/Form/setting_value_edit.html.twig')
+        ));
+    }
+
+    public function setParameterBag(ParameterBagInterface $parameterBag): void
+    {
+        $this->parameterBag = $parameterBag;
+    }
+
+    public function setSettings(SettingsService $settings): void
+    {
+        $this->settings = $settings;
     }
 
     /**
      * @param Settings $object
      */
-    private function clearCache(Settings $object)
+    private function clearCache(Settings $object): void
     {
-        /** @var \Vsavritsky\SettingsBundle\Service\Settings $settings */
-        $settings = $this->getConfigurationPool()->getContainer()->get('vsavritsky_settings.settings');
-        $settings->clearCache($object->getName());
+        $this->settings->clearCache($object->getName());
         if ($object->getCategory()) {
-            $settings->clearGroupCache($object->getCategory()->getName());
+            $this->settings->clearGroupCache($object->getCategory()->getName());
         }
     }
 

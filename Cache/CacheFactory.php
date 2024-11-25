@@ -9,24 +9,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class CacheFactory
 {
-    /**
-     * @param string $serviceName
-     * @param ContainerInterface $container
-     * @return AdapterCacheInterface|null
-     * @static
-     */
-    public static function createByName($serviceName, ContainerInterface $container)
+    public static function createByName(string $serviceName, ContainerInterface $container): ?AdapterCacheInterface
     {
         $service = $container->get($serviceName, ContainerInterface::NULL_ON_INVALID_REFERENCE);
         return is_null($service) ? null : self::create($service);
     }
 
-    /**
-     * @param object $service
-     * @return AdapterCacheInterface|null
-     * @static
-     */
-    public static function create($service)
+    public static function create(object $service): ?AdapterCacheInterface
     {
         if ($service instanceof AdapterInterface) {
             return new SymfonyCache($service);

@@ -9,6 +9,7 @@ services:
             - ~
         calls:
             - [ setTranslationDomain, [messages]]
+            - [ setSettings, ['@vsavritsky_settings.settings']]
         public: true
 
     vsavritsky.sonata.admin.settings:
@@ -21,4 +22,6 @@ services:
             - ~
         calls:
             - [ setTranslationDomain, [messages]]
+            - [ setParameterBag, ['@parameter_bag']]
+            - [ setSettings, ['@vsavritsky_settings.settings']]
         public: true

@@ -6,15 +6,8 @@ use Doctrine\Common\Cache\CacheProvider;
 
 class DoctrineCache implements AdapterCacheInterface
 {
-    /** @var CacheProvider */
-    private $provider;
-
-    /**
-     * @param CacheProvider $provider
-     */
-    public function __construct(CacheProvider $provider)
+    public function __construct(private CacheProvider $provider)
     {
-        $this->provider = $provider;
     }
 
     /**

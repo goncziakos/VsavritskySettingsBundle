@@ -3,11 +3,12 @@
 namespace Vsavritsky\SettingsBundle\Service;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Vsavritsky\SettingsBundle\Cache\AdapterCacheInterface;
 use Vsavritsky\SettingsBundle\DBAL\SettingsType;
 use Vsavritsky\SettingsBundle\Entity\Category;
 use Vsavritsky\SettingsBundle\Entity\Settings as SettingsEntity;
-use Vsavritsky\SettingsBundle\Entity\SettingsRepository;
+use Vsavritsky\SettingsBundle\Repository\SettingsRepository;
 
 /**
  * Class Settings
@@ -15,29 +16,14 @@ use Vsavritsky\SettingsBundle\Entity\SettingsRepository;
  */
 class Settings
 {
-    /** @var EntityManager */
-    private $em;
+    private array $settings = array();
+    private array $groups = array();
 
-    /** @var AdapterCacheInterface */
-    private $cache;
-
-    /** @var SettingsRepository */
-    private $repository;
-
-    private $settings = array();
-    private $groups = array();
-
-    /**
-     * @param EntityManager $em
-     * @param AdapterCacheInterface|null $cache
-     */
-    public function __construct(EntityManager $em, $cache)
-    {
-        if ($cache instanceof AdapterCacheInterface) {
-            $this->cache = $cache;
-        }
-        $this->em = $em;
-        $this->repository = $em->getRepository('Vsavritsky\SettingsBundle\Entity\Settings');
+    public function __construct(
+        private EntityManagerInterface $em,
+        private AdapterCacheInterface $cache,
+        private SettingsRepository $repository
+    ) {
     }
 
     private function getCacheKey($name)

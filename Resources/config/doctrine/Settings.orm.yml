@@ -1,7 +1,7 @@
 Vsavritsky\SettingsBundle\Entity\Settings:
     type: entity
     table: vsavritsky_settings
-    repositoryClass: Vsavritsky\SettingsBundle\Entity\SettingsRepository
+    repositoryClass: Vsavritsky\SettingsBundle\Repository\SettingsRepository
     indexes:
         name_idx:
             columns: [ name ]

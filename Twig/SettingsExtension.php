@@ -2,31 +2,21 @@
 
 namespace Vsavritsky\SettingsBundle\Twig;
 
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 use Vsavritsky\SettingsBundle\Service\Settings;
 
-class SettingsExtension extends \Twig_Extension
+class SettingsExtension extends AbstractExtension
 {
-    /** @var Settings */
-    private $settings;
-
-    /**
-     * @param Settings $settings
-     */
-    public function __construct(Settings $settings)
+    public function __construct(private Settings $settings)
     {
-        $this->settings = $settings;
     }
 
-    public function getName()
-    {
-        return 'vsavritsky_settings_extension';
-    }
-
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
-            new \Twig_SimpleFunction('settings', array($this, 'getSettings')),
-            new \Twig_SimpleFunction('settings_group', array($this, 'getSettingsGroup')),
+            new TwigFunction('settings', array($this, 'getSettings')),
+            new TwigFunction('settings_group', array($this, 'getSettingsGroup')),
         );
     }
 
@@ -35,7 +25,7 @@ class SettingsExtension extends \Twig_Extension
         return $this->settings->get($name, $subname);
     }
 
-    public function getSettingsGroup($name)
+    public function getSettingsGroup($name): ?array
     {
         return $this->settings->group($name);
     }

@@ -1,41 +1,49 @@
 services:
-    vsavritsky_settings.cache_provider:
-        class: AdapterCacheInterface
-        factory: [Vsavritsky\SettingsBundle\Cache\CacheFactory, createByName]
-        arguments:
-            - "%vsavritsky_settings.cache_provider%"
-            - "@service_container"
-        public: true
+  vsavritsky_settings.cache_provider:
+    class: Symfony\Component\Cache\Adapter\AdapterInterface
+    factory: [ Vsavritsky\SettingsBundle\Cache\CacheFactory, createByName ]
+    arguments:
+      - "%vsavritsky_settings.cache_provider%"
+      - "@service_container"
+    public: true
 
-    vsavritsky_settings.settings:
-        class: Vsavritsky\SettingsBundle\Service\Settings
-        arguments:
-            - "@doctrine.orm.entity_manager"
-            - "@vsavritsky_settings.cache_provider"
-        public: true
+  Vsavritsky\SettingsBundle\Repository\SettingsRepository:
+    tags: ['doctrine.repository_service']
+    arguments:
+      - "@Doctrine\\Persistence\\ManagerRegistry"
+      - "Vsavritsky\\SettingsBundle\\Entity\\Settings"
+    public: true
 
-    vsavritsky_settings.twig.settings:
-        class: Vsavritsky\SettingsBundle\Twig\SettingsExtension
-        arguments:
-            - "@vsavritsky_settings.settings"
-        tags: [{ name: twig.extension }]
-        public: true
+  vsavritsky_settings.settings:
+    class: Vsavritsky\SettingsBundle\Service\Settings
+    arguments:
+      - "@doctrine.orm.default_entity_manager"
+      - "@vsavritsky_settings.cache_provider"
+      - "@Vsavritsky\\SettingsBundle\\Repository\\SettingsRepository"
+    public: true
 
-    vsavritsky_settings.form.type.setting_value:
-        class: Vsavritsky\SettingsBundle\Form\Type\SettingValueType
-        arguments:
-            - "@service_container"
-            - "%vsavritsky_settings.html_widget%"
-        tags:
-            - { name: form.type, alias: setting_value }
-        public: true
+  vsavritsky_settings.twig.settings:
+    class: Vsavritsky\SettingsBundle\Twig\SettingsExtension
+    arguments:
+      - "@vsavritsky_settings.settings"
+    tags: [ { name: twig.extension } ]
+    public: true
 
-    vsavritsky_settings.form.settings:
-        class: Vsavritsky\SettingsBundle\Form\Settings
-        tags: [{ name: form.type, alias: vsavritsky_settings }]
-        public: true
+  vsavritsky_settings.form.type.setting_value:
+    class: Vsavritsky\SettingsBundle\Form\Type\SettingValueType
+    arguments:
+      - "@service_container"
+      - "%vsavritsky_settings.html_widget%"
+    tags:
+      - { name: form.type, alias: setting_value }
+    public: true
 
-    vsavritsky_settings.form.category:
-        class: Vsavritsky\SettingsBundle\Form\Category
-        tags: [{ name: form.type, alias: vsavritsky_settings_category }]
-        public: true
+  vsavritsky_settings.form.settings:
+    class: Vsavritsky\SettingsBundle\Form\Settings
+    tags: [ { name: form.type, alias: vsavritsky_settings } ]
+    public: true
+
+  vsavritsky_settings.form.category:
+    class: Vsavritsky\SettingsBundle\Form\Category
+    tags: [ { name: form.type, alias: vsavritsky_settings_category } ]
+    public: true
