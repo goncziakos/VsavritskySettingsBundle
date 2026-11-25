@@ -4,7 +4,6 @@ namespace Vsavritsky\SettingsBundle\Cache;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\Cache\Simple\AbstractCache;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class CacheFactory
@@ -21,8 +20,6 @@ class CacheFactory
             return new SymfonyCache($service);
         } elseif ($service instanceof CacheProvider) {
             return new DoctrineCache($service);
-        } elseif ($service instanceof AbstractCache) {
-            return new SimpleCache($service);
         }
         return null;
     }

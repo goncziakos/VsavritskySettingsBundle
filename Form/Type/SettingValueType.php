@@ -4,10 +4,10 @@ namespace Vsavritsky\SettingsBundle\Form\Type;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SettingValueType extends AbstractType
@@ -28,14 +28,11 @@ class SettingValueType extends AbstractType
         $this->htmlWidget = $htmlWidget;
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $choiceViewClass = Kernel::MAJOR_VERSION == 2 && Kernel::MINOR_VERSION == 6
-            ? 'Symfony\Component\Form\Extension\Core\View\ChoiceView'
-            : 'Symfony\Component\Form\ChoiceList\View\ChoiceView';
         $choiceList = array(
-            new $choiceViewClass('off', 'off', "Off"),
-            new $choiceViewClass('on', 'on', "On"),
+            new ChoiceView('off', 'off', "Off"),
+            new ChoiceView('on', 'on', "On"),
         );
 
         $view->vars = array_replace($view->vars, array(
@@ -75,7 +72,7 @@ class SettingValueType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }
@@ -83,15 +80,7 @@ class SettingValueType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'setting_value';
     }

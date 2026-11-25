@@ -71,7 +71,7 @@ class Settings
      * @param Category $category
      * @return Settings
      */
-    public function setCategory(Category $category = null)
+    public function setCategory(?Category $category = null)
     {
         $this->category = $category;
         return $this;
